@@ -1,19 +1,23 @@
 import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
-
+from RegressionML.logger import Logger
 
 class LinearRegression:
     def __init__(self):
-        self.W = None
+        self.__W = None
+        self.__logger = Logger()
 
     def normal(self, X, y):
         """
         :param X: (numpy array) (shape: m x n) The feature-example matrix
         :param y: the target vector (numpy array) shape: (m, 1)
-        :return:
+        :return: Self
         """
-        return np.linalg.pinv(X.T @ X) @ X.T @ y
+
+        self.__W = np.linalg.pinv(np.dot(np.dot(np.dot(X.T, X), X.T), y))
+
+        return self
 
     def fit(self, X, y, a=0.01, n_iters=1000):
         """
@@ -25,13 +29,13 @@ class LinearRegression:
         """
         X = np.c_[np.ones(X.shape[0]), X]
         m, n = X.shape
-        self.W = np.zeros(n)
+        self.__W = np.zeros(n)
         self.cost_history_ = []
-        #print(self.predict(X).shape) # (4,)
+        # print(self.predict(X).shape) # (4,)
         iter_number = 0
         for _ in range(n_iters):
             try:
-                if (np.abs(self.cost_history_[-1] - self.cost_history_[-2]) < 0.001):
+                if np.abs(self.cost_history_[-1] - self.cost_history_[-2]) < 0.001:
                     break
             except IndexError:
                 pass
@@ -39,11 +43,18 @@ class LinearRegression:
                 predictions = self.predict(X)
                 diff = predictions - y
                 update = a * np.dot(diff.T, X)
-                #print(update.shape) # (2,)
-                #print(self.W.shape) # (2,)
-                self.W = self.W - update
-                self.cost_history_.append(self.mse(y, predictions))
+                # print(update)
+                # print(update.shape) # (2,)
+                # print(self.W.shape) # (2,)
+                self.__W = self.__W - update
+                cost = self.mse(y, predictions)
+                self.cost_history_.append(cost)
                 iter_number+=1
+
+                if (iter_number % 100 == 0):
+                    self.__logger.msg(list(self.__W), iter_number, cost)
+
+        self.__logger.log(iter_number)
         return self
 
     def mse(self, y, y_hat):
@@ -56,24 +67,26 @@ class LinearRegression:
         :param X: (numpy array) (shape: m x n) The feature-example matrix
         :return y: (numpy array) (shape m x 1) The predictions based on the weights
         """
-        return np.dot(X, self.W.T)
+        return np.dot(X, self.__W.T)
 
-    def feature_scale(self, X):
+    @staticmethod
+    def feature_scale(X):
         """
         :param X: Data that is going to be feature-scaled
         :return: Feature Scaled Data
         """
         return X / np.std(X)
 
-
-    def mean_normalize(self, X):
+    @staticmethod
+    def mean_normalize(X):
         """
         :param X: Data that is going to be mean normalized
         :return: Mean normalized data, which has a mean of approx. 0 and a unit variance
         """
         return (X - np.mean(X))/np.std(X)
 
-    def train_test_split(self, X, y, train_percent=0.8, seed=2):
+    @staticmethod
+    def train_test_split(X, y, train_percent=0.8, seed=2):
         """
 
         :param X: The (m x n) example-feature matrix
@@ -103,12 +116,19 @@ class LinearRegression:
         predictions = self.predict(X__)
         return X_, predictions
 
-    def generate_dataset(self, samples, features, seed):
+    @staticmethod
+    def generate_dataset(samples, features, seed):
         X, y = make_regression(n_samples=samples, n_features=features, noise=20, random_state=seed)
         return X, y
 
-    def sk_split(self, X, y, train_percentage = 0.8):
+    @staticmethod
+    def sk_split(X, y, train_percentage = 0.8):
         return train_test_split(X, y, test_size = 1-train_percentage, random_state=2)
+
+    @property
+    def W(self):
+        return self.__W
+
 
 
 # TODO:
