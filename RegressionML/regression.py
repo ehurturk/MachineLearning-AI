@@ -37,6 +37,7 @@ class LinearRegression:
         for _ in range(n_iters):
             try:
                 if np.abs(self.cost_history_[-1] - self.cost_history_[-2]) < 0.001:
+                    print("Change in cost is less than 0.001, exitting iterations...")
                     break
             except IndexError:
                 pass
@@ -51,10 +52,10 @@ class LinearRegression:
                 self.rsq_history.append(rsqerr)
                 iter_number+=1
 
-                if (iter_number % 100 == 0):
+                if (iter_number % 10 == 0):
                     self.__logger.msg(list(self.__W), iter_number, cost, rsqerr)
 
-        self.__logger.log(iter_number)
+        self.__logger.log(iter_number, self.cost_history_[-1], self.rsq_history[-1])
         return self
 
     def mse(self, y, y_hat):
@@ -136,7 +137,3 @@ class LinearRegression:
         return rsq
 
 
-
-# TODO:
-# Implement RMSE, and R2
-# Implement a logging system in which program logs the output of the data

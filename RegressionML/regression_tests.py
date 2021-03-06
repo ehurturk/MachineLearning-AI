@@ -4,7 +4,7 @@ from RegressionML import Graph
 reg = LinearRegression()
 graph = Graph()
 
-X_, y = LinearRegression.generate_dataset(samples=100, features=1, seed=1) # Generating a dataset with 100 samples with only 1 feature with a random seed 1
+X_, y = LinearRegression.generate_dataset(samples=500, features=1, seed=2) # Generating a dataset with 100 samples with only 1 feature with a random seed 1
 X = LinearRegression.mean_normalize(X_) # Scaling the features the make gradient descent converge faster
 X_train, X_test, y_train, y_test = LinearRegression.sk_split(X_, y, 0.8) # Splitting the original data to train and test the model
 reg.fit(X_train, y_train, 0.001, 10000) # Train the model using the training examples

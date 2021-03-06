@@ -1,19 +1,17 @@
 import os
 import json
-import datetime
 
 class Logger:
     def __init__(self):
         self.__dir = os.path.dirname(__file__)
         self.__filename = os.path.join(self.__dir, "log.json")
-        self.data = None
-        self.date = datetime.datetime.now().strftime("%m/%d/%YT%H/%M/%S")
+        self.data = []
         self.message = [] # change later
 
 
 
-    def log(self, total_iter):
-        self.message.append({"Total Iterations": total_iter})
+    def log(self, total_iter, fcost, frsq):
+        self.message.append({"Total Iterations": total_iter, "Final Cost": fcost, "Final R Squared:": frsq})
         self.data.append(self.message)
 
         with open(self.__filename, "w") as out:
