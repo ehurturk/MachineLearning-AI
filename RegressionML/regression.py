@@ -31,6 +31,7 @@ class LinearRegression:
         m, n = X.shape
         self.__W = np.zeros(n)
         self.cost_history_ = []
+        self.rsq_history = []
         # print(self.predict(X).shape) # (4,)
         iter_number = 0
         for _ in range(n_iters):
@@ -43,16 +44,15 @@ class LinearRegression:
                 predictions = self.predict(X)
                 diff = predictions - y
                 update = a * np.dot(diff.T, X)
-                # print(update)
-                # print(update.shape) # (2,)
-                # print(self.W.shape) # (2,)
                 self.__W = self.__W - update
                 cost = self.mse(y, predictions)
+                rsqerr = self.rsq(predictions, y)
                 self.cost_history_.append(cost)
+                self.rsq_history.append(rsqerr)
                 iter_number+=1
 
                 if (iter_number % 100 == 0):
-                    self.__logger.msg(list(self.__W), iter_number, cost)
+                    self.__logger.msg(list(self.__W), iter_number, cost, rsqerr)
 
         self.__logger.log(iter_number)
         return self
@@ -128,6 +128,12 @@ class LinearRegression:
     @property
     def W(self):
         return self.__W
+
+    def rsq(self, preds, y):
+        rss = np.sum((y-preds)**2)
+        tss = np.sum((y-np.mean(y)) ** 2)
+        rsq = 1 - (rss/tss)
+        return rsq
 
 
 

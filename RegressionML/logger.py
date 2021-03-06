@@ -19,7 +19,7 @@ class Logger:
         with open(self.__filename, "w") as out:
             json.dump(self.data, out)
 
-    def msg(self, params, iter_n, cost):
+    def msg(self, params, iter_n, cost, rsq):
         with open(self.__filename, "r") as jsondata:
             try:
                 self.data = json.load(jsondata)
@@ -29,7 +29,9 @@ class Logger:
         self.message.append({
                 "Iteration": iter_n,
                 "Cost": cost,
+                "R Squared": rsq,
                 "Parameters": list(params),
+
         })
 
 
