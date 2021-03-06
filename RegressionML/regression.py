@@ -52,7 +52,7 @@ class LinearRegression:
                 self.rsq_history.append(rsqerr)
                 iter_number+=1
 
-                if (iter_number % 10 == 0):
+                if (iter_number % 50 == 0):
                     self.__logger.msg(list(self.__W), iter_number, cost, rsqerr)
 
         self.__logger.log(iter_number, self.cost_history_[-1], self.rsq_history[-1])
