@@ -44,7 +44,7 @@ class LinearRegression:
             finally:
                 predictions = self.predict(X)
                 diff = predictions - y
-                update = a * np.dot(diff.T, X)
+                update = a * (1/m) * np.dot(diff.T, X)
                 self.__W = self.__W - update
                 cost = self.mse(y, predictions)
                 rsqerr = self.rsq(predictions, y)
