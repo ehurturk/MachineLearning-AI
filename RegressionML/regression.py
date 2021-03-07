@@ -37,14 +37,14 @@ class LinearRegression:
         for _ in range(n_iters):
             try:
                 if np.abs(self.cost_history_[-1] - self.cost_history_[-2]) < 0.001:
-                    print("Change in cost is less than 0.001, exitting iterations...")
+                    print(f"Change in cost is less than 0.001 in iteration {iter_number}, exitting iterations...")
                     break
             except IndexError:
                 pass
             finally:
                 predictions = self.predict(X)
                 diff = predictions - y
-                update = a * (1/m) * np.dot(diff.T, X)
+                update = a * (2/m) * np.dot(diff.T, X)
                 self.__W = self.__W - update
                 cost = self.mse(y, predictions)
                 rsqerr = self.rsq(predictions, y)
@@ -52,7 +52,7 @@ class LinearRegression:
                 self.rsq_history.append(rsqerr)
                 iter_number+=1
 
-                if (iter_number % 50 == 0):
+                if (iter_number % 100 == 0):
                     self.__logger.msg(list(self.__W), iter_number, cost, rsqerr)
 
         self.__logger.log(iter_number, self.cost_history_[-1], self.rsq_history[-1])
